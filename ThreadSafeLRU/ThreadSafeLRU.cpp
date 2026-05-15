@@ -5,6 +5,7 @@
 
 #include<map>
 #include<list>
+#include<memory>
 
 using namespace std;
 
@@ -13,10 +14,11 @@ class LRUCache
 	using CacheList = std::list<pair<int, int>>;
 	using CacheIter = CacheList::iterator;
 	int m_capacity;
+	std::mutex _mtx;
 
 	CacheList m_cacheList; //list to store the key-value pairs in order of usage (most recently used at the front)
 	std::map<int , CacheIter > m_cache;
-
+	std::shared_lock slck(_mtx, std::defer_lock);
 
 public:
 	LRUCache(int Capacity) : m_capacity(Capacity) {
@@ -28,10 +30,13 @@ public:
 	[[nodiscard]]
 		int get(int key)
 	{
+			
 		if (m_cache.find(key) != m_cache.end())
 		{
 			CacheIter it = m_cache[key];
+			slck.lock();//reader lock
 			m_cacheList.splice(m_cacheList.begin(), m_cacheList, it); //Where before to insert in the list , Source List , Iterator (because the map stores the key and list iterator)
+			slck.unlock();
 			it->second; //return the value
 		}
 		else
@@ -53,13 +58,15 @@ public:
 				if (m_cacheList.size() == m_capacity)
 				{
 					int keytpRemove = m_cache[key]->first;
-					
+					std::unique_lock l (_mtx);//writer lock
+					l.lock();
 					m_cacheList.erase( std::prev(m_cacheList.end()));
 					m_cache.erase(keytpRemove); //remove the key from the map
 				}
 
 				m_cacheList.emplace_front(std::make_pair(key, value));
 				m_cache[key] = m_cacheList.begin(); //store the iterator in the map
+				l.unlock();
 
 			}
 		}
