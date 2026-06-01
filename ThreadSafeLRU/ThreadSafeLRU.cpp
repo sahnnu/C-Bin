@@ -14,7 +14,7 @@ class LRUCache
 	using CacheList = std::list<pair<int, int>>;
 	using CacheIter = CacheList::iterator;
 	int m_capacity;
-	std::mutex _mtx;
+	std::shared_mutex _mtx;
 
 	CacheList m_cacheList; //list to store the key-value pairs in order of usage (most recently used at the front)
 	std::map<int , CacheIter > m_cache;
