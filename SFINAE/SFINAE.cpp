@@ -49,8 +49,6 @@ int main()
 	OPCUA opcua;
 	DataSource<Hist > histDataSource(&hist);
 	histDataSource.getSample();
-
-	
 	DataSource<OPCUA> opcuaDataSource(&opcua);
 	opcuaDataSource.setdata();
 

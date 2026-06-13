@@ -1,0 +1,21 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "Execute",
+      "appliesTo": "*.cpp",
+      "type": "launch",
+      "command": "cl.exe",
+      "args": [
+        "/std:c\u002B\u002B20",
+        "/EHsc",
+        "${file}"
+      ]
+    },
+    {
+      "taskLabel": "task-C-Bin",
+      "appliesTo": "/",
+      "type": "launch"
+    }
+  ]
+}
